@@ -1,0 +1,9 @@
+.header {
+    padding: 30px;
+    background: #CCC;
+    color: #FFF;
+}
+
+.d-flex {
+    display: flex;
+}

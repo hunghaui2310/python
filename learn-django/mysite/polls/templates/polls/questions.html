@@ -1,0 +1,18 @@
+{% extends 'polls/base.html' %}
+
+{% block contentQuestion %}
+    {% if questions %}
+    <ul>
+        {% for item in questions %}
+        <div class="d-flex">
+            <a href="{% url 'polls:detail' item.id %}"><li>{{ item.question_text }}</li></a>
+        </div>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <h2>Khong co du lieu</h2>
+    {% endif %}
+
+    <h3>Day la 1 cau hoi:</h3>
+    <p>{{ question.question_text }}</p>
+{% endblock %}
