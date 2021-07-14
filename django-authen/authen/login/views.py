@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, decorators
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import PostForm
 
 # Create your views here.
 
@@ -19,9 +21,30 @@ class LoginClass(View):
         login(req, my_user)
         return render(req, 'login/success.html')
 
-class ViewUser(View):
+class ViewUser(LoginRequiredMixin, View):
+    login_url = '/login/'
     def get(self, req):
-        if not req.user.is_authenticated:
-            return HttpResponse('Chua dang nhap')
+        return HttpResponse('<h1>Day la View User(Ban da dang nhap)</h1>')
+
+@decorators.login_required(login_url='/login/')
+def view_product(req):
+    return HttpResponse('Xem san pham')
+
+
+class AddPost(LoginRequiredMixin, View):
+    login_url = '/login/'
+    def get(self, req):
+        f = PostForm()
+        context = {'fm': f}
+        return render(req, 'login/add_post.html', context)
+
+    def post(self, req):
+        f = PostForm(req.POST)
+        if f.is_valid():
+            if req.user.has_perm('Login.add_post'):
+                f.save()
+            else:
+                return HttpResponse('Permission Deny!')
         else:
-            return HttpResponse('<h1>Day la View User(Ban da dang nhap)</h1>')
+            return HttpResponse('Form Invalid!')
+        return HttpResponse('oke')
